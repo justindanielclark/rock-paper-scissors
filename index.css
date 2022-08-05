@@ -1,0 +1,225 @@
+:root {
+    --controlsTiming: .05s;
+    --noticeTiming: .1s;
+    --rotationTiming: 1.2s;
+    --preBattleTiming: .5s;
+    --battleTiming: .8s;
+    --resolveBattlingTiming: .5s;
+    --strokeWidth: 10px;
+    --controlHeight: 20%;
+    --trueBottom: 86%;
+}
+
+#buttonContainer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: .5em;
+}
+#buttonContainer>button {
+    padding: .5em;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: #123;
+    color: #FFF;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+}
+@media(orientation: landscape){
+    #container {
+        height: 90%;
+    }
+}
+@media(orientation: portrait){
+    #container {
+        width: 90%;
+    }
+}
+
+#container {
+    aspect-ratio: 1/1;
+    border: 2px solid white;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* NOTICEBOARD */
+#noticeBoard {
+    flex: 0 0 10%;
+    background-color: rgba(20,0,0,.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-size: 2rem;
+}
+#namePlates {
+    height: 100%;
+    flex: 0 0 100%;
+    background-color: rgba(0,0,0,.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.namePlate {
+    padding: 0 1em;
+    height: 100%;
+    display: flex;
+    flex: 0 0 50%;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5%;
+}
+.namePlate:nth-of-type(2){
+    justify-content: flex-end;
+}
+.namePlate>svg {
+    height: 100%;
+    stroke-width: 2px;
+    stroke: white;
+    fill: white;
+}
+.namePlate:nth-of-type(2)>svg{
+    transform: translateY(20%);
+}
+#notice {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    background-color: rgba(255,0,0,1);
+    transition: bottom var(--noticeTiming) linear;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.showNotice {
+    bottom: 0;
+}
+.hideNotice {
+    bottom: -100%;
+}
+
+
+
+/* GAME BOARD */
+#gameSpace {
+    flex: 0 0 90%;
+    background-color: rgba(0,255,0,.1);
+    position: relative;
+}
+.character {
+    position: absolute;
+    width: 33%;
+    aspect-ratio: 1/1;
+}
+.character:first-of-type{
+    left: 10%;
+}
+.character:nth-of-type(2){
+    right: 10%;
+}
+.character>.imageContainer {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+}
+.character:nth-of-type(2)>.imageContainer {
+    transform: scaleX(-1) translateX(50%);
+}
+.character>.imageContainer>svg {
+    stroke-width: var(--strokeWidth);
+}
+    .prebattle {
+        animation: prebattle var(--preBattleTiming) ease-in-out;
+    }
+    .prebattleInvert {
+        animation: prebattleInvert var(--preBattleTiming) ease-in-out;
+    }
+    .battling {
+        animation: battling var(--battleTiming) ease-in-out;
+        animation-delay: .2s
+    }
+    .resolveBattling {
+        animation: resolveBattling var(--resolveBattlingTiming) linear;
+    }
+    .rotating {
+        animation: rotating var(--rotationTiming) linear infinite;
+    }
+    .rotatingReverse {
+        animation: rotating var(--rotationTiming) linear infinite;
+        animation-direction: reverse;
+    }
+
+/* CONTROLS */
+#controls {
+    height: var(--controlHeight);
+    width: 100%;
+    position: absolute;
+    left: 0;
+    
+    transition: bottom var(--controlsTiming) linear;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: .5em 0;
+}
+.control{
+    border: 2px solid white;
+    border-radius: 5px;;
+    height: 100%;
+    aspect-ratio: 1/1;
+    padding: .2em;
+}
+.control>svg {
+    height: 100%;
+    stroke-width: var(--strokeWidth);
+}
+.showControls {
+    bottom: 0;
+}
+.hideControls {
+    bottom: calc(-1 * var(--controlHeight));
+}
+
+@keyframes rotating {
+    0% {transform: rotate(0deg)}
+    100% {transform: rotate(360deg);}    
+}
+@keyframes prebattle {
+    0% {transform: translateX(0%)}
+    50% {transform: translateX(52%)}
+    100% {transform: translateX(0%)}
+}
+@keyframes prebattleInvert {
+    0% {transform: translateX(0%)}
+    50% {transform: translateX(-52%)}
+    100% {transform: translateX(0%)}
+}
+@keyframes battling {
+    0% {top: 0%}
+    15% {top: var(--trueBottom)}
+    45% {top: 0%}
+    60% {top: var(--trueBottom)}
+    85% {top: 0%}
+    100% {top: var(--trueBottom)}
+}
+@keyframes resolveBattling {
+    0% {top: var(--trueBottom)}
+    100% {top: 0%}
+}
