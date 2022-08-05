@@ -20,6 +20,8 @@ const Game = {
   PlayerSVGs: PlayerSVGs,
   playerChoice: null,
   computerChoice: null,
+  playerScore: 0,
+  computerScore: 0,
   makeComputerChoice: function(){
     this.computerChoice = Math.floor(Math.random()*3);
     return this.computerChoice;
@@ -39,6 +41,10 @@ const Game = {
       if(this.computerChoice === 0){return -1}
       return 1;
     }
+  },
+  updateScore: function(num){
+    if(num === 1) {this.playerScore++}
+    else if(num === -1) {this.computerScore++}
   }
 }
 
@@ -46,25 +52,18 @@ const Game = {
 
 init();
 
+
+
 function init(){
-  //NORMAL BUTTONS
   setupControls();
   setupTranstions();
-  //DEBUG BUTTONS
-  // setupControlsButton();
-  // setupNoticeBoardButton();
-  // setupRotationButton();
-  // setupPreBattleButton();
-  // setupBattleButton();
 }
 
-
-
-//BUTTONS
 function setupControls(){
   const controls = Array.from(document.querySelectorAll('.control')).forEach(control => control.addEventListener('click', (e)=>{
       Game.playerChoice = parseInt(e.currentTarget.dataset.choice);
       Game.computerChoice = Game.makeComputerChoice();
+      Game.updateScore(Game.determineWinner());
       Game.state = States.preFistBump;
       toggleControls();
     }))
@@ -76,10 +75,11 @@ function setupTranstions(){
     if (Game.state === States.preFistBump) {
       Game.state = States.preBattle;
       toggleRotation();
+      resetPlayerComputerSVG();
       toggleFistBump();
     }
   }, {capture: true});
-  // FROM PRE BATTLE -> BATTLE
+  // FROM PRE BATTLE -> BATTLE, BATTLE -> RESOLVEBATTLE, RESOLVEBATTLE -> IDLE
   document.querySelector('#player').addEventListener('animationend', (e) => {
     if (Game.state === States.preBattle) {
       Game.state = States.battle;
@@ -90,6 +90,12 @@ function setupTranstions(){
       toggleBattle();
       toggleResolveBattle();
       setPlayerComputerSVG();
+    } else if (Game.state === States.resolveBattle) {
+      Game.state = States.idle;
+      updateScoreBoard();
+      toggleControls();
+      toggleResolveBattle();
+      toggleRotation();
     }
   })
 }
@@ -120,6 +126,7 @@ function toggleBattle(){
 function toggleResolveBattle(){
   document.querySelector('#player').classList.toggle('resolveBattling');
   document.querySelector('#computer').classList.toggle('resolveBattling');
+
 }
 //STATE TRANSITIONS FUNCTIONS
 function transitionToFistBump(e){
@@ -137,7 +144,9 @@ function transitionToBattle(e){
     toggleBattle();
   }
 }
-//IMAGE SETTERS
+
+
+//VIEW UPDATERS
 function setPlayerComputerSVG(){
   const Player = document.querySelector('#player>.imageContainer>svg')
   Player.replaceWith(PlayerSVGs[Game.playerChoice].cloneNode(true));
@@ -150,21 +159,7 @@ function resetPlayerComputerSVG(){
   const Computer = document.querySelector('#computer>.imageContainer>svg')
   Computer.replaceWith(PlayerSVGs[0].cloneNode(true));
 }
-
-
-//DEBUG BUTTONS
-function setupRotationButton(){
-  document.querySelector('#buttonRotation').addEventListener('click', (e)=>{
-    toggleRotation();
-  })
-}
-function setupPreBattleButton(){
-  document.querySelector('#buttonPreBattle').addEventListener('click', (e)=>{
-    toggleFistBump();
-  })
-}
-function setupBattleButton(){
-  document.querySelector('#buttonBattle').addEventListener('click', (e)=>{
-    toggleBattle();
-  })
+function updateScoreBoard(){
+  document.querySelector(`#playerScore`).textContent = `${Game.playerScore}`;
+  document.querySelector(`#computerScore`).textContent = `${Game.computerScore}`;
 }
