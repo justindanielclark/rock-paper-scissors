@@ -45,7 +45,39 @@ const Game = {
   updateScore: function(num){
     if(num === 1) {this.playerScore++}
     else if(num === -1) {this.computerScore++}
-  }
+  },
+  generateWinText: function(){
+    const winText = [
+      `Nice Work!`,
+      `Aces!`,
+      `Bingo!`,
+      `EZ Game`,
+      `GG`,
+      `You Win!`,
+      `Winner Winner!`,
+      `Congrats!`,
+    ]
+    return winText[Math.floor(Math.random()*winText.length)];
+  },
+  generateTieText: function(){
+    const tieText = [
+      `Tie`,
+      `Nothing Changes`,
+      `Nada`,
+      `Nothing Going`,
+      `Evenly Matched`
+    ]
+    return tieText[Math.floor(Math.random()*tieText.length)];
+  },
+  generateLoseText: function(){
+    const loseText = [
+      `Ooph!`,
+      `Get Rekt`,
+      `That's gotta sting`,
+      `You Lose!`
+    ]
+    return loseText[Math.floor(Math.random()*loseText.length)];
+  },
 }
 
 
@@ -90,12 +122,17 @@ function setupTranstions(){
       toggleBattle();
       toggleResolveBattle();
       setPlayerComputerSVG();
+      updateNoticeBoard();
     } else if (Game.state === States.resolveBattle) {
       Game.state = States.idle;
       updateScoreBoard();
       toggleControls();
       toggleResolveBattle();
       toggleRotation();
+      toggleNotice();
+      setTimeout(()=>{
+        toggleNotice();
+      }, 2000)
     }
   })
 }
@@ -162,4 +199,22 @@ function resetPlayerComputerSVG(){
 function updateScoreBoard(){
   document.querySelector(`#playerScore`).textContent = `${Game.playerScore}`;
   document.querySelector(`#computerScore`).textContent = `${Game.computerScore}`;
+}
+function updateNoticeBoard(){
+  let text = '';
+  switch(Game.determineWinner()){
+    case 0:{
+      text = Game.generateTieText();
+      break;
+    }
+    case 1:{
+      text = Game.generateWinText();
+      break;
+    }
+    case -1:{
+      text = Game.generateLoseText();
+      break;
+    }
+  }
+  document.querySelector(`#noticeText`).textContent = text;
 }
